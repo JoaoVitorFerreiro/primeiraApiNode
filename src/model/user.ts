@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 export class User {
   constructor(
     private id: string,
@@ -19,9 +20,20 @@ export class User {
     if (senha.length < 6) throw new Error("senha muito curta");
   }
 
-  static create(nome: string, telefone: string, email: string, senha: string, idade?: number) {
+  static create(
+    nome: string,
+    telefone: string,
+    email: string,
+    senha: string,
+    idade?: number
+  ) {
     const id = crypto.randomUUID();
-    return new User(id, nome, telefone, email, senha, idade);
+    const hashedPassword = bcrypt.hashSync(senha);
+    return new User(id, nome, telefone, email, hashedPassword, idade);
+  }
+
+  verifyPassword(senha: string): boolean {
+    return bcrypt.compareSync(senha, this.senha);
   }
 
   getId(): string {

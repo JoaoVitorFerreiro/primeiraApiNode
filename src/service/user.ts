@@ -3,10 +3,6 @@ import { User } from "../model/user";
 export class UserService {
   lista: User[] = [];
 
-  constructor(public armazenamento: User[]) {
-    this.lista = armazenamento;
-  }
-
   createUser(user: {
     nome: string;
     telefone: string;
@@ -23,6 +19,14 @@ export class UserService {
     );
     this.lista.push(userCreated);
     return userCreated;
+  }
+
+  autenticar(email: string, senha: string): User {
+    const user = this.lista.find((user) => user.getEmail() === email);
+    if (!user || !user.verifyPassword(senha)) {
+      throw new Error("Email ou senha inválidos");
+    }
+    return user;
   }
 
   getUsers(): User[] {

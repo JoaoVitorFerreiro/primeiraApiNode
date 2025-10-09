@@ -3,18 +3,50 @@ import { app } from "../server";
 import { UserService } from "../service/user";
 
 export function UserController() {
-  const list: User[] = [];
-  const service = new UserService(list);
+  const service = new UserService();
 
   app.get("/users", (req, res) => {
     const users = service.getUsers();
-    res.json(users);
+
+    const usersSemSenha = users.map((user) => ({
+      id: user.getId(),
+      nome: user.getNome(),
+      telefone: user.getTelefone(),
+      email: user.getEmail(),
+      idade: user.getIdade(),
+    }));
+
+    res.json(usersSemSenha);
   });
 
   app.post("/users", (req, res) => {
     const userData = req.body;
     const newUser = service.createUser(userData);
-    res.status(201).json(newUser);
+    res.status(201).json({
+      status: "Usuário criado com sucesso",
+      id: newUser.getId(),
+    });
+  });
+
+  app.post("/users/authenticacao", (req, res) => {
+    try {
+      const { email, senha } = req.body;
+      const user = service.autenticar(email, senha);
+
+      // retorna versão pública (sem senha)
+      res.json({
+        status: "Autenticado com sucesso",
+        data: {
+          id: user.getId(),
+          nome: user.getNome(),
+          telefone: user.getTelefone(),
+          email: user.getEmail(),
+          idade: user.getIdade(),
+        },
+      });
+    } catch (e: any) {
+      return res.status(401).json({ error: e.message || "Não autorizado" });
+    }
   });
 
   app.get("/users/search", (req, res) => {

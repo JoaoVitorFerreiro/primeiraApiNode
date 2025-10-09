@@ -15,6 +15,16 @@ content-type: application/json
   "idade": 30
 }
 
+
+### Autenticar
+POST http://localhost:3000/users/authenticacao
+content-type: application/json
+
+{
+  "email": "joao@email.com",
+  "senha": "senha123"
+}
+
 ### Search user by nome
 GET http://localhost:3000/users/search?nome=João Silva
 
