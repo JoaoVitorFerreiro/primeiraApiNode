@@ -3,7 +3,7 @@ import { User } from "../model/user";
 export class UserService {
   lista: User[] = [];
 
-  createUser(user: {
+  criarUsuario(user: {
     nome: string;
     telefone: string;
     email: string;
@@ -29,15 +29,59 @@ export class UserService {
     return user;
   }
 
-  getUsers(): User[] {
+  editarUsuario(
+    email: string,
+    dados: {
+      nome?: string;
+      telefone?: string;
+      senha?: string;
+      idade?: number;
+    }
+  ): User {
+    const user = this.lista.find((user) => user.getEmail() === email);
+    if (!user) {
+      throw new Error("Usuário não encontrado");
+    }
+
+    if (dados.nome) user.setNome(dados.nome);
+    if (dados.telefone) user.setTelefone(dados.telefone);
+    if (dados.senha) user.setSenha(dados.senha);
+    if (dados.idade !== undefined) user.setIdade(dados.idade);
+
+    return user;
+  }
+
+  listarUsuarios(): User[] {
     return this.lista;
   }
 
-  getUserByNome(nome: string): User | undefined {
+  buscarUsuarioPorNome(nome: string): User | undefined {
     return this.lista.find((user) => user.getNome() === nome);
   }
 
-  getUserByIdade(idade: number): User | undefined {
+  buscarUsuarioPorIdade(idade: number): User | undefined {
     return this.lista.find((user) => user.getIdade() === idade);
+  }
+
+  // Métodos de filtro que retornam listas
+  filtrarUsuariosPorIdade(idade: number): User[] {
+    return this.lista.filter((user) => user.getIdade() === idade);
+  }
+
+  filtrarUsuariosPorFaixaEtaria(idadeMin: number, idadeMax: number): User[] {
+    return this.lista.filter((user) => {
+      const userIdade = user.getIdade();
+      return (
+        userIdade !== undefined &&
+        userIdade >= idadeMin &&
+        userIdade <= idadeMax
+      );
+    });
+  }
+
+  filtrarUsuariosPorNome(nome: string): User[] {
+    return this.lista.filter((user) =>
+      user.getNome().toLowerCase().includes(nome.toLowerCase())
+    );
   }
 }

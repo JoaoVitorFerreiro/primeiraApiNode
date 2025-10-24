@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+
 export class User {
   constructor(
     private id: string,
@@ -12,10 +13,6 @@ export class User {
     if (!telefone) throw new Error("telefone obrigatório");
     if (!email) throw new Error("email obrigatório");
     if (!senha) throw new Error("senha obrigatória");
-
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      throw new Error("formato de email inválido");
-
     if (nome.length < 3) throw new Error("nome muito curto");
     if (senha.length < 6) throw new Error("senha muito curta");
   }
@@ -36,6 +33,7 @@ export class User {
     return bcrypt.compareSync(senha, this.senha);
   }
 
+  // Getters
   getId(): string {
     return this.id;
   }
@@ -58,5 +56,27 @@ export class User {
 
   getSenha(): string {
     return this.senha;
+  }
+
+  // Setters
+  setNome(nome: string): void {
+    this.nome = nome;
+  }
+
+  setTelefone(telefone: string): void {
+    this.telefone = telefone;
+  }
+
+  setEmail(email: string): void {
+    this.email = email;
+  }
+
+  setSenha(senha: string): void {
+    const hashedPassword = bcrypt.hashSync(senha);
+    this.senha = hashedPassword;
+  }
+
+  setIdade(idade: number): void {
+    this.idade = idade;
   }
 }

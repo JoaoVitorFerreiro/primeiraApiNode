@@ -1,9 +1,5 @@
 import express from "express";
 import { UserController } from "./controller/user";
-import { ServicoController } from "./controller/servico";
-import { BarbeiroController } from "./controller/barbeiro";
-import { AgendamentoController } from "./controller/agendamento";
-
 export const app = express();
 
 app.use((req, res, next) => {
@@ -21,9 +17,6 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 UserController();
-ServicoController();
-BarbeiroController();
-AgendamentoController();
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
