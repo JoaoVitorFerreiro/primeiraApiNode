@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Usuários</title>
+</head>
+<body>
+    <h1>Gerenciador de Usuários</h1>
+
+    <hr>
+
+    <!-- Listar Usuários -->
+    <h2>Listar Usuários</h2>
+    <button onclick="listarUsuarios()">Listar Todos</button>
+
+    <hr>
+
+    <!-- Criar Usuário -->
+    <h2>Criar Usuário</h2>
+    <input type="text" id="criarNome" placeholder="Nome"><br>
+    <input type="text" id="criarTelefone" placeholder="Telefone"><br>
+    <input type="email" id="criarEmail" placeholder="Email"><br>
+    <input type="password" id="criarSenha" placeholder="Senha"><br>
+    <input type="number" id="criarIdade" placeholder="Idade"><br>
+    <button onclick="criarUsuario()">Criar</button>
+
+    <hr>
+
+    <!-- Editar Usuário -->
+    <h2>Editar Usuário</h2>
+    <input type="email" id="editarEmail" placeholder="Email do usuário"><br>
+    <input type="text" id="editarNome" placeholder="Novo Nome"><br>
+    <input type="text" id="editarTelefone" placeholder="Novo Telefone"><br>
+    <input type="number" id="editarIdade" placeholder="Nova Idade"><br>
+    <button onclick="editarUsuario()">Editar</button>
+
+    <hr>
+
+    <!-- Autenticar -->
+    <h2>Autenticar</h2>
+    <input type="email" id="authEmail" placeholder="Email"><br>
+    <input type="password" id="authSenha" placeholder="Senha"><br>
+    <button onclick="autenticar()">Entrar</button>
+
+    <hr>
+
+    <!-- Buscar -->
+    <h2>Buscar Usuários</h2>
+    <input type="text" id="buscarNome" placeholder="Nome">
+    <button onclick="buscarPorNome()">Buscar por Nome</button><br><br>
+
+    <input type="number" id="buscarIdade" placeholder="Idade">
+    <button onclick="buscarPorIdade()">Buscar por Idade</button><br><br>
+
+    <input type="number" id="idadeMin" placeholder="Idade Mín">
+    <input type="number" id="idadeMax" placeholder="Idade Máx">
+    <button onclick="buscarPorFaixa()">Buscar por Faixa</button>
+
+    <hr>
+
+    <!-- Resultado -->
+    <h2>Resultado:</h2>
+    <pre id="resultado"></pre>
+
+    <script>
+        const API = 'http://localhost:3000';
+
+        function mostrar(dados) {
+            document.getElementById('resultado').textContent = JSON.stringify(dados, null, 2);
+        }
+
+        async function listarUsuarios() {
+            const response = await fetch(`${API}/usuarios`);
+            const dados = await response.json();
+            mostrar(dados);
+        }
+
+        async function criarUsuario() {
+            const body = {
+                nome: document.getElementById('criarNome').value,
+                telefone: document.getElementById('criarTelefone').value,
+                email: document.getElementById('criarEmail').value,
+                senha: document.getElementById('criarSenha').value,
+                idade: parseInt(document.getElementById('criarIdade').value)
+            };
+
+            const response = await fetch(`${API}/usuarios`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            const dados = await response.json();
+            mostrar(dados);
+        }
+
+        async function editarUsuario() {
+            const email = document.getElementById('editarEmail').value;
+            const body = {
+                nome: document.getElementById('editarNome').value,
+                telefone: document.getElementById('editarTelefone').value,
+                idade: parseInt(document.getElementById('editarIdade').value)
+            };
+
+            const response = await fetch(`${API}/usuarios/${email}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            const dados = await response.json();
+            mostrar(dados);
+        }
+
+        async function autenticar() {
+            const body = {
+                email: document.getElementById('authEmail').value,
+                senha: document.getElementById('authSenha').value
+            };
+
+            const response = await fetch(`${API}/usuarios/autenticacao`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            const dados = await response.json();
+            mostrar(dados);
+        }
+
+        async function buscarPorNome() {
+            const nome = document.getElementById('buscarNome').value;
+            const response = await fetch(`${API}/usuarios/buscar?nome=${nome}`);
+            const dados = await response.json();
+            mostrar(dados);
+        }
+
+        async function buscarPorIdade() {
+            const idade = document.getElementById('buscarIdade').value;
+            const response = await fetch(`${API}/usuarios/buscar?idade=${idade}`);
+            const dados = await response.json();
+            mostrar(dados);
+        }
+
+        async function buscarPorFaixa() {
+            const min = document.getElementById('idadeMin').value;
+            const max = document.getElementById('idadeMax').value;
+            const response = await fetch(`${API}/usuarios/buscar?idadeMin=${min}&idadeMax=${max}`);
+            const dados = await response.json();
+            mostrar(dados);
+        }
+    </script>
+</body>
+</html>
